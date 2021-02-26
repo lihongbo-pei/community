@@ -1,9 +1,7 @@
 package com.lhb.community.controller;
 
-import com.lhb.community.entity.Comment;
-import com.lhb.community.entity.DiscussPost;
-import com.lhb.community.entity.Page;
-import com.lhb.community.entity.User;
+import com.lhb.community.entity.*;
+import com.lhb.community.event.EventProducer;
 import com.lhb.community.service.CommentService;
 import com.lhb.community.service.DiscussPostService;
 import com.lhb.community.service.LikeService;
@@ -39,6 +37,8 @@ public class DiscussPostController implements CommunityConstant {
     private CommentService commentService;
     @Autowired
     private LikeService likeService;
+    @Autowired
+    private EventProducer eventProducer;
 
     @RequestMapping(path = "/add",method = RequestMethod.POST)
     @ResponseBody
@@ -53,6 +53,15 @@ public class DiscussPostController implements CommunityConstant {
         post.setContent(content);
         post.setCreateTime(new Date());
         discussPostService.addDiscussPost(post);
+
+        // 触发发帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(user.getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(post.getId());
+        eventProducer.fireEvent(event);
+
         // 报错的情况将来统一处理
         return CommunityUtil.getJSONString(0,"发布成功！");
     }

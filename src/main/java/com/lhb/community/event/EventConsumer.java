@@ -10,7 +10,6 @@ import com.lhb.community.service.MessageService;
 import com.lhb.community.util.CommunityConstant;
 import com.lhb.community.util.CommunityUtil;
 import com.qiniu.common.QiniuException;
-import com.qiniu.common.Zone;
 import com.qiniu.http.Response;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.Region;

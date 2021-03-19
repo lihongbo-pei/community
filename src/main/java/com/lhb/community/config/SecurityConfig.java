@@ -49,6 +49,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                         AUTHORITY_ADMIN,
                         AUTHORITY_MODERATOR
                 )
+                .antMatchers(
+                        "/discuss/top",
+                        "/discuss/wonderful"
+                )
+                .hasAnyAuthority(
+                        AUTHORITY_MODERATOR
+                )
+                .antMatchers(
+                        "/discuss/delete",
+                        "/data/**"
+                )
+                .hasAnyAuthority(
+                        AUTHORITY_ADMIN
+                )
                 .anyRequest().permitAll()
                 .and().csrf().disable();
         // 权限不够时的处理
@@ -59,7 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
                         String xRequestedWith = request.getHeader("x-requested-with");
                         if ("XMLHttpRequest".equals(xRequestedWith)){
-                            response.setContentType("application/plain;charset=utf");
+                            response.setContentType("application/plain;charset=utf-8");
                             PrintWriter writer = response.getWriter();
                             writer.write(CommunityUtil.getJSONString(403, "你还没有登录哦！"));
                         }else {
@@ -73,7 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException, ServletException {
                         String xRequestedWith = request.getHeader("x-requested-with");
                         if ("XMLHttpRequest".equals(xRequestedWith)){
-                            response.setContentType("application/plain;charset=utf");
+                            response.setContentType("application/plain;charset=utf-8");
                             PrintWriter writer = response.getWriter();
                             writer.write(CommunityUtil.getJSONString(403, "你没有访问此功能的权限！"));
                         }else {
